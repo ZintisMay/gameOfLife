@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		#target{
+			display: flex;
+			height:500px;
+			width:500px;
+			flex-wrap: wrap;
+		}
+		.cell{
+			outline:1px solid black;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}	
+	</style>
+</head>
+<body>
+	<div id="target"></div>
+	<script type="text/javascript">
+		var log = console.log
+
+		class gameOfLife{
+			constructor(target, size){
+				this.size = size
+				this.target = target
+				this.createBoard()
+				this.displayBoard()
+				this.startLife()
+			}
+			createBoard(){
+				console.log("createBoard")
+				var board = []
+				for(var x = 0; x < this.size; x++){
+					var row = []
+					for(var y = 0; y < this.size; y++){
+						if(x % y){
+							row.push(true)
+						}else{
+
+						row.push(false)
+						}
+					}
+					board.push(row)
+				}
+				this.board = board
+			}
+			displayBoard(){
+				console.log("displayBoard")
+				console.log(this.board)
+				this.target.innerHTML = ""
+				var html = ""
+				this.board.map( (row) => {
+					row.map((cell) => {
+						html += `<div class="cell" style="width:${100 / this.size}%;height:${100 / this.size}%;background-color:${cell ? "red" : "black"}">${cell ? 1 : 0}</div>`
+					})
+				})
+				this.target.innerHTML = html
+			}
+
+			startLife(){
+				console.log("startLife")
+				var that = this
+				var howMany = 0
+				this.loop = setInterval( () => {
+					that.generation()
+					that.displayBoard()
+					howMany++
+					if(howMany > 100){
+						alert("ending life")
+						clearInterval(that.loop)
+					}
+				}, 250)
+			}
+			generation(){
+				console.log("generation")
+
+				var newBoard = []
+				this.board.map((row,x) => {
+					var newRow = []
+					row.map((cell,y)=>{
+						var neighbors = countNeighbors(this.board, x, y)
+						if( neighbors < 2 || neighbors > 3){
+							newRow.push(false)
+						}else{
+							newRow.push(true)
+						}
+					})
+					newBoard.push(newRow)
+				})
+				this.board = newBoard
+
+				function countNeighbors(board, x, y){
+					var vals = [-1, 0, 1]
+					var count = 0;
+					vals.map( (a) => {
+						vals.map( (b) => {
+							if(board[x + a] && board[x + a][y+b]){
+								count++
+							}
+						})
+					})
+					return count
+					console.log(x,y,count)
+				}
+
+			}
+		}
+		var game = new gameOfLife(document.getElementById("target"), 50)
+	</script>
+
+</body>
+</html>
