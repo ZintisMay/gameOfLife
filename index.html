@@ -20,23 +20,24 @@
 <body>
 	<div id="target"></div>
 	<script type="text/javascript">
-		var log = console.log
+		// var log = console.log
 
 		class gameOfLife{
-			constructor(target, size){
+			constructor(target, size, speed){
 				this.size = size
 				this.target = target
+				this.speed = speed
 				this.createBoard()
 				this.displayBoard()
 				this.startLife()
 			}
 			createBoard(){
-				console.log("createBoard")
+				// console.log("createBoard")
 				var board = []
 				for(var x = 0; x < this.size; x++){
 					var row = []
 					for(var y = 0; y < this.size; y++){
-						if(x % y){
+						if(x % y == 3){
 							row.push(true)
 						}else{
 
@@ -48,8 +49,8 @@
 				this.board = board
 			}
 			displayBoard(){
-				console.log("displayBoard")
-				console.log(this.board)
+				// console.log("displayBoard")
+				// console.log(this.board)
 				this.target.innerHTML = ""
 				var html = ""
 				this.board.map( (row) => {
@@ -61,32 +62,38 @@
 			}
 
 			startLife(){
-				console.log("startLife")
+				// console.log("startLife")
 				var that = this
 				var howMany = 0
 				this.loop = setInterval( () => {
 					that.generation()
 					that.displayBoard()
 					howMany++
-					if(howMany > 100){
+					if(howMany > 1000){
 						alert("ending life")
 						clearInterval(that.loop)
 					}
-				}, 250)
+				}, this.speed)
 			}
 			generation(){
-				console.log("generation")
+				// console.log("generation")
 
 				var newBoard = []
 				this.board.map((row,x) => {
 					var newRow = []
 					row.map((cell,y)=>{
 						var neighbors = countNeighbors(this.board, x, y)
+
 						if( neighbors < 2 || neighbors > 3){
 							newRow.push(false)
-						}else{
+						}else if (neighbors == 3){
 							newRow.push(true)
+						}else if (neighbors == 2 && cell == true){
+							newRow.push(true)
+						}else{
+							newRow.push(false)
 						}
+
 					})
 					newBoard.push(newRow)
 				})
@@ -97,18 +104,20 @@
 					var count = 0;
 					vals.map( (a) => {
 						vals.map( (b) => {
-							if(board[x + a] && board[x + a][y+b]){
+							if(a == 0 && b == 0 ){
+
+							}else if(board[x + a] && board[x + a][y+b]){
 								count++
 							}
+							
 						})
 					})
 					return count
-					console.log(x,y,count)
 				}
 
 			}
 		}
-		var game = new gameOfLife(document.getElementById("target"), 50)
+		var game = new gameOfLife(document.getElementById("target"), 10, 3000)
 	</script>
 
 </body>
